@@ -19,10 +19,8 @@ using namespace std;
 
 
 
-
-
-
 int main(int argc, char* argv[]) {
+	
 
 	vector<argparse> param;
 	string path = "";
@@ -44,7 +42,8 @@ int main(int argc, char* argv[]) {
 		stringstream ss;
 		ss << input.rdbuf();
 		inputString = ss.str();
-		
+		m_tolower1(inputString);
+	
 	}
 
 	vector<char> funcParam = { 'c','f','p','q' };
@@ -77,10 +76,14 @@ int main(int argc, char* argv[]) {
 				WordCount(inputString, umap, isXExist, stopwordsPath);
 				break;
 			case 'p':
-				PhraseCount(inputString, umap, isVExist, verbDictPath, isXExist, stopwordsPath);
+				PhraseCount(inputString,stoi(it->getValue()), umap, isVExist, verbDictPath, isXExist, stopwordsPath);
 				break;
 			case 'q':
-				PairCount(inputString, umap, isVExist, verbDictPath);
+				if (!isVExist) {
+					cerr << "[Error] With -q option while without -v option";
+					exit(1);
+				}
+				PairCount(inputString, it->getValue(),verbDictPath,umap);
 				break;
 			default:
 				break;
@@ -93,5 +96,4 @@ int main(int argc, char* argv[]) {
 		m_output(umap, stoi(it->getValue()));
 	else
 		m_output(umap);
-
 }

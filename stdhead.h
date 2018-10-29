@@ -17,7 +17,8 @@
 #include <unordered_set>
 using namespace std;
 namespace fs = std::experimental::filesystem;
-
+//#include <boost/algorithm/string/join.hpp>
+//#include <boost/algorithm/string.hpp>
 
 class Freq {
 public:
@@ -64,5 +65,9 @@ inline bool m_isalpha(char c);
 void WordCount(string& text, unordered_map<string, double>& umap, bool isXExist, string stopWordsPath);
 void m_output(unordered_map<string, double>& umap, int limit = 0);
 void DirSearch(string dirPath, bool isRecursive, string& inputString);
-void PhraseCount(string& inputString, unordered_map<string, double>& umap, bool isVExist, string verbDictPath, bool isXExist, string stopwordsPath);
-void PairCount(string& inputString, unordered_map<string, double>& umap, bool isVExist, string verbDictPath);
+void PhraseCount(string& inputString, int len, unordered_map<string, double>& umap, bool isVExist, string verbDictPath, bool isXExist, string stopwordsPath);
+void PairCount(string& inputString, string prepFilePath, string verbDictFile, unordered_map<string, double>& umap);
+void m_tolower1(string& s);
+bool m_isalnum(char c);
+void m_search(string& inputString, vector<vector<string>>& inputStringVec);
+inline string m_join(vector<string> vec, string sep);
