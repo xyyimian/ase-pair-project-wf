@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
 	if (isVExist)
 		verbDictPath = it->getValue();
 	p = 'x';
-	bool isXExist = (find_if(param.begin(), param.end(), f) != param.end());
+	bool isXExist = ((it = find_if(param.begin(), param.end(), f)) != param.end());
 
 	string stopwordsPath;
 	if (isXExist)
