@@ -114,11 +114,11 @@ void m_output(unordered_map<string, double>& umap, int limit) {
 	/*
 	double sum = 0;
 	for (auto w : umap) {
-		sum += w.second;
+	sum += w.second;
 	}
 
 	for (auto& w : umap) {
-		w.second = (long long)(w.second / sum * 10000) / 100.0;
+	w.second = (long long)(w.second / sum * 10000) / 100.0;
 	}
 	*/
 	for (auto& w : umap) {
@@ -171,18 +171,18 @@ void PhraseCount(string& inputString, int len, unordered_map<string, double>& um
 	//since one word who appears in stopwords may appear in verb-dict, so we firstly, change every word to 
 	//suppose all stopwords appear in their original form
 
-	
 
-	
+
+
 	unordered_map<string, string> verbMap;
-	
+
 	if (isVExist) {
 		ifstream verbDict;
 		verbDict.open(verbDictPath, ios::in);
-		
+
 		string rule;
 		string arrow, index, value;
-		
+
 		while (getline(verbDict, rule)) {
 			stringstream srule(rule);
 			srule >> value >> arrow >> index;
@@ -199,11 +199,11 @@ void PhraseCount(string& inputString, int len, unordered_map<string, double>& um
 		ifstream stopwordsFile;
 		stopwordsFile.open(stopwordsPath, ios::in);
 		string stopword;
-		while (stopwordsFile>> stopword) {
+		while (stopwordsFile >> stopword) {
 			stopwordsList.insert(stopword);
 		}
 	}
-	
+
 
 	vector<vector<string>> inputStringVec;
 
@@ -211,17 +211,32 @@ void PhraseCount(string& inputString, int len, unordered_map<string, double>& um
 
 
 	for (auto& contString : inputStringVec) {
-		if(isXExist){
-			contString.erase(remove_if(contString.begin(), contString.end(), [stopwordsList](string s){return stopwordsList.find(s) != stopwordsList.end()}));
+		
+		if (isXExist) {
+			contString.erase(remove_if(contString.begin(), contString.end(), [&stopwordsList](string s) -> bool {return stopwordsList.find(s) != stopwordsList.end(); }), contString.end());
 		}
-		if(isVExist){
-			for_each(contString.begin(), contString.end(), [](string& s){if(verbDict.find(s) != verbDict.end()) s = verbDict[s]});
+		if (isVExist) {
+			for_each(contString.begin(), contString.end(), [&verbMap](string& s) {if (verbMap.find(s) != verbMap.end()) s = verbMap[s]; });
 		}
-		for (auto it = contString.begin(); distance(it,contString.end()) >= len; ++it) {
+		
+		/*
+		for (auto it = contString.begin(); it != contString.end();) {
+			if (isXExist) {
+				if (stopwordsList.find(*it) != stopwordsList.end())
+					it = contString.erase(it);
+				else{
+					if (isVExist && verbMap.find(*it) != verbMap.end())
+						*it = verbMap[*it];
+					++it;
+				}
+			}
+		}
+		for (auto it = contString.begin(); distance(it, contString.end()) >= len; ++it) {
 			//string phrase = boost::algorithm::join(vector<string>(it, it+len), " ");
 			string phrase = m_join(vector<string>(it, it + len), " ");
 			umap[phrase] += 1;
 		}
+		*/
 	}
 }
 
@@ -239,21 +254,21 @@ void m_search(string& inputString, vector<vector<string>>& inputStringVec) {
 	bool isin = false;
 	string::iterator sbegin;
 	vector<string> segment;
-	for (auto it = inputString.begin();  it != inputString.end(); ++it) {
+	for (auto it = inputString.begin(); it != inputString.end(); ++it) {
 		if (isin) {
 			char temp = *it;
-			if (!m_isalnum(temp)){
+			if (!m_isalnum(temp)) {
 				segment.push_back(string(sbegin, it));
 				isin = false;
-				if ((temp != ' ') && (temp != '\t') && (temp != '\n')){
+				if ((temp != ' ') && (temp != '\t') && (temp != '\n')) {
 					inputStringVec.push_back(segment);
 					segment.clear();
 				}
-				
+
 			}
 		}
 		else {
-			if(m_isalpha(*it)) {
+			if (m_isalpha(*it)) {
 				sbegin = it;
 				isin = true;
 			}
@@ -285,7 +300,7 @@ void PairCount(string& inputString, string prepFilePath, string verbDictFile, un
 		srule >> value >> arrow >> index;
 		const char* delim = ",";
 		char* token = strtok(const_cast<char *>(index.c_str()), delim);
-		while (token !=  NULL) {
+		while (token != NULL) {
 			verbMap[token] = value;
 			token = strtok(NULL, delim);
 		}
