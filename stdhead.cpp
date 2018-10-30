@@ -208,10 +208,15 @@ void PhraseCount(string& inputString, int len, unordered_map<string, double>& um
 	vector<vector<string>> inputStringVec;
 
 	m_search(inputString, inputStringVec);
-	
-	
+
 
 	for (auto& contString : inputStringVec) {
+		if(isXExist){
+			contString.erase(remove_if(contString.begin(), contString.end(), [stopwordsList](string s){return stopwordsList.find(s) != stopwordsList.end()}));
+		}
+		if(isVExist){
+			for_each(contString.begin(), contString.end(), [](string& s){if(verbDict.find(s) != verbDict.end()) s = verbDict[s]});
+		}
 		for (auto it = contString.begin(); distance(it,contString.end()) >= len; ++it) {
 			//string phrase = boost::algorithm::join(vector<string>(it, it+len), " ");
 			string phrase = m_join(vector<string>(it, it + len), " ");
