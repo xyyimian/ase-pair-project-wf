@@ -33,7 +33,7 @@ void parse(int argc, char** argv, vector<argparse>& param, string& path) {
 	}
 }
 
-void CharacterCount(string& text, unordered_map<string, double> umap) {
+void CharacterCount(string& text, unordered_map<string, double>& umap) {
 
 	vector<double> frequency(26, 0);
 	vector<Freq> wf;
@@ -47,13 +47,18 @@ void CharacterCount(string& text, unordered_map<string, double> umap) {
 		sum += i;
 	}
 	for (auto& i : frequency) {
-		i = (long long)(i / sum * 10000) / 100.0;
+		if(i!=0)
+			i = (long long)(i / sum * 10000) / 100.0;
 	}
 	for (int i = 0; i < 26; ++i) {
 		wf.emplace_back('a' + i, frequency[i]);
 	}
 	for (int i = 0; i < 26; i++) {
-		umap["" + ('a' + i)] = frequency[i];
+		int a = 97 + i;
+		char c = (char)a;
+		string s = "a";
+		s[0] = c;
+		umap[s] = frequency[i];
 	}
 
 
@@ -171,9 +176,6 @@ void PhraseCount(string& inputString, int len, unordered_map<string, double>& um
 	//since one word who appears in stopwords may appear in verb-dict, so we firstly, change every word to 
 	//suppose all stopwords appear in their original form
 
-
-
-
 	unordered_map<string, string> verbMap;
 
 	if (isVExist) {
@@ -211,14 +213,14 @@ void PhraseCount(string& inputString, int len, unordered_map<string, double>& um
 
 
 	for (auto& contString : inputStringVec) {
-		
+
 		if (isXExist) {
 			contString.erase(remove_if(contString.begin(), contString.end(), [&stopwordsList](string s) -> bool {return stopwordsList.find(s) != stopwordsList.end(); }), contString.end());
 		}
 		if (isVExist) {
 			for_each(contString.begin(), contString.end(), [&verbMap](string& s) {if (verbMap.find(s) != verbMap.end()) s = verbMap[s]; });
 		}
-		
+
 		/*
 		for (auto it = contString.begin(); it != contString.end();) {
 			if (isXExist) {
@@ -230,13 +232,13 @@ void PhraseCount(string& inputString, int len, unordered_map<string, double>& um
 					++it;
 				}
 			}
-		}
+		}*/
 		for (auto it = contString.begin(); distance(it, contString.end()) >= len; ++it) {
 			//string phrase = boost::algorithm::join(vector<string>(it, it+len), " ");
 			string phrase = m_join(vector<string>(it, it + len), " ");
 			umap[phrase] += 1;
 		}
-		*/
+		
 	}
 }
 
@@ -298,6 +300,7 @@ void PairCount(string& inputString, string prepFilePath, string verbDictFile, un
 	while (getline(verbFile, rule)) {
 		stringstream srule(rule);
 		srule >> value >> arrow >> index;
+		verbMap[value] = value;
 		const char* delim = ",";
 		char* token = strtok(const_cast<char *>(index.c_str()), delim);
 		while (token != NULL) {
