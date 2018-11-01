@@ -33,7 +33,7 @@ void parse(int argc, char** argv, vector<argparse>& param, string& path) {
 	}
 }
 
-void CharacterCount(string& text, unordered_map<string, double>& umap) {
+void CharacterCount(string& text, unordered_map<string, double>& umap， int limit = 0) {
 
 	vector<double> frequency(26, 0);
 	vector<Freq> wf;
@@ -53,15 +53,26 @@ void CharacterCount(string& text, unordered_map<string, double>& umap) {
 	for (int i = 0; i < 26; ++i) {
 		wf.emplace_back('a' + i, frequency[i]);
 	}
-	for (int i = 0; i < 26; i++) {
-		int a = 97 + i;
-		char c = (char)a;
-		string s = "a";
-		s[0] = c;
-		umap[s] = frequency[i];
+	
+	stable_sort(wf.begin(), wf.end());
+
+	if (limit != 0) {
+		long counter = 0;
+		for (auto w : wf) {
+			++counter;
+			if (counter > limit || w.freq == 0)
+				break;
+			cout << fixed << setprecision(2) << w.word << ": " << w.freq << "%" << endl;
+		}
 	}
-
-
+	else {
+		for (auto w : wf) {
+			if (w.freq == 0)
+				break;
+			cout << fixed << setprecision(2) << w.word << ": " << w.freq << "%" << endl;
+		}
+	}
+	cout.unsetf(ios::fixed);
 }
 
 inline bool m_isalpha(char c) {
@@ -137,14 +148,14 @@ void m_output(unordered_map<string, double>& umap, int limit) {
 			++counter;
 			if (counter > limit || w.freq == 0)
 				break;
-			cout << fixed << setprecision(2) << w.word << ": " << w.freq << "%" << endl;
+			cout << fixed << setprecision(2) << w.word << ": " << w.freq << endl;
 		}
 	}
 	else {
 		for (auto w : wordList) {
 			if (w.freq == 0)
 				break;
-			cout << fixed << setprecision(2) << w.word << ": " << w.freq << "%" << endl;
+			cout << fixed << setprecision(2) << w.word << ": " << w.freq << endl;
 		}
 	}
 	cout.unsetf(ios::fixed);

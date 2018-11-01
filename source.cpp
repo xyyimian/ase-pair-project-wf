@@ -59,10 +59,12 @@ int main(int argc, char* argv[]) {
 	string stopwordsPath;
 	if (isXExist)
 		stopwordsPath = it->getValue();
-
-
-
-
+	
+	bool isNExist = ((it = find_if(param.begin(), param.end(), [](argparse arg)->bool {return arg.getName() == 'n'; })) != param.end());
+	int len = 0;
+	if(isNExist)
+		len = stoi(it->getValue());
+	
 	for (char p1 : funcParam) {
 		p = p1;
 		auto it = find_if(param.begin(), param.end(), f);
@@ -70,8 +72,9 @@ int main(int argc, char* argv[]) {
 			switch (it->getName())
 			{
 			case 'c':
-				CharacterCount(inputString, umap);
-				break;
+				CharacterCount(inputString, umap, len);
+				exit(0);
+				//break;
 			case 'f':
 				WordCount(inputString, umap, isXExist, stopwordsPath);
 				break;
@@ -91,7 +94,6 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	bool isNExist = ((it = find_if(param.begin(), param.end(), [](argparse arg)->bool {return arg.getName() == 'n'; })) != param.end());
 	if (isNExist)
 		m_output(umap, stoi(it->getValue()));
 	else
